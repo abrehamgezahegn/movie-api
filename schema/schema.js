@@ -55,6 +55,12 @@ const customerSchema = new mongoose.Schema({
 		match: /^[0-9+-]+$/,
 		minLength: 9,
 		maxLength: 20
+	},
+	email: {
+		type: String,
+		unique: true,
+		minLength: 7,
+		maxLength: 80
 	}
 })
 
@@ -83,22 +89,21 @@ const movieSchema = new mongoose.Schema({
 const Movie = mongoose.model("Movie" , movieSchema);
 
 const rentalSchema = new mongoose.Schema({
-	movies:{
-		type: [{
+	movie:{		
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "Movie",
 			required: true
-		}],
-		validate: {
-			validator: function(movies){
-				const filtered = movies.filter(Boolean)
-				return filtered && filtered.length > 0
-			},
-			message: "A rental must have a movie"
-		}	},
-	hours: {
-		type: Number,
-		required: true
+		// 	validate: {
+		// 		validator: function(movies){
+		// 			const filtered = movies.filter(Boolean)
+		// 			return filtered && filtered.length > 0
+		// 		},
+		// 		message: "A rental must have a movie"
+		// }	
+	},
+	dateOut: {
+		type: Date,
+		default: Date.now()
 	},
 	customer: {
 		type: mongoose.Schema.Types.ObjectId,

@@ -20,6 +20,7 @@ const rootRouter = require("./routers/root");
 const customersRouter = require("./routers/customers");
 const moviesRouter = require("./routers/movies");
 const rentalRouter = require("./routers/rentals")
+const authRouter = require('./routers/auth');
 
 const app = express();
 
@@ -48,6 +49,7 @@ app.use("/api/genres" , genresRouter);
 app.use("/api/customers" , customersRouter)
 app.use("/api/movies" , moviesRouter);
 app.use("/api/rentals" , rentalRouter);
+app.use("/api/auth" , authRouter)
 app.use('/' , rootRouter)
 
 
