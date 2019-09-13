@@ -1,0 +1,21 @@
+{
+  "name": "vidly",
+  "version": "1.0.0",
+  "description": "Movies renting app",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "dev": "nodemon index.js"
+  },
+  "dependencies": {
+    "@hapi/joi": "^15.1.1",
+    "debug": "^4.1.1",
+    "express": "^4.17.1",
+    "helmet": "^3.20.0",
+    "mongodb": "^3.3.1",
+    "mongoose": "^5.6.10",
+    "morgan": "^1.9.1",
+    "nodemon": "^1.19.1",
+    "prettier": "^1.18.2"
+  }
+}

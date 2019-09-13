@@ -1,0 +1,34 @@
+Arguments: 
+  /usr/bin/node /usr/share/yarn/bin/yarn.js add express nodemon prettier @hapi/joi
+
+PATH: 
+  /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/abreham/.yarn/bin
+
+Yarn version: 
+  1.16.0
+
+Node version: 
+  8.10.0
+
+Platform: 
+  linux x64
+
+Trace: 
+  Error: getaddrinfo ENOTFOUND registry.yarnpkg.com registry.yarnpkg.com:443
+      at errnoException (dns.js:50:10)
+      at GetAddrInfoReqWrap.onlookup [as oncomplete] (dns.js:92:26)
+
+npm manifest: 
+  {
+    "name": "vidly",
+    "version": "1.0.0",
+    "description": "Movies renting app",
+    "main": "index.js",
+    "license": "MIT"
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile
