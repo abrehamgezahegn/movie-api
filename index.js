@@ -1,3 +1,4 @@
+require('dotenv').config()
 const express = require('express');
 const helmet = require("helmet");
 const morgan = require("morgan");
@@ -7,11 +8,6 @@ const mongoose = require("mongoose");
 // debug env instances
 const debugStartup = require("debug")("app:startup");
 const dbDebugger = require("debug")("app:db");
-
-
-// auth middlewares
-const logger  = require("./middlewares/logger");
-const autho = require("./middlewares/authorization");
 
 
 // routers
@@ -24,10 +20,9 @@ const authRouter = require('./routers/auth');
 
 const app = express();
 
-
 // mongoose db connection
 mongoose
-		.connect("mongodb://localhost/vidly" , { useNewUrlParser: true })
+		.connect("mongodb://localhost/vidly" , { useNewUrlParser: true ,useCreateIndex: true  })
 		.then(() => {dbDebugger("connected to mongoose")})
 		.catch(err => {dbDebugger(err)})
 
@@ -40,8 +35,6 @@ app.use(express.json());
 app.use(morgan("tiny"))
 
 // Auth middlewares
-app.use(logger)
-app.use(autho)
 
 
 // router middlewares
@@ -54,6 +47,8 @@ app.use('/' , rootRouter)
 
 
 const port = process.env.PORT || 3000 ;
+
+console.log(process.env.NODE_ENV)
 
 app.listen(port , () =>{
 	console.log(`Vidly running on ${port}`)

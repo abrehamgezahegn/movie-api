@@ -1,13 +1,15 @@
 const express = require("express");
 const {Movie} = require("../schema/schema");
 const dbDebugger = require("debug")("app:db");
+const authorize = require("../middlewares/auth");
+
 
 const router = express.Router();
 
 
 router.get("/" , async (req,res)=> {
 	try{
-		const movies = await Movie.find().populate("genres");
+		const movies = await Movie.find().populate("genre");
 		res.send(movies)
 	}catch(err){
 		res.status(500).send(err);		
@@ -19,7 +21,7 @@ router.get("/" , async (req,res)=> {
 router.get("/:id" , async (req,res) => {
 	const movieId = req.params.id;
 	try{
-		const movie = await Movie.findById(movieId).populate({path: "genres"});
+		const movie = await Movie.findById(movieId).populate({path: "genre"});
 		if(!movie) return res.status(400).send("NOthing found bro");
 
 		res.send(movie);
@@ -31,14 +33,14 @@ router.get("/:id" , async (req,res) => {
 })
 
 
-router.post("/" , async (req,res) => {
+router.post("/" ,  authorize,async (req,res) => {
 	const data = req.body;
 
 	try{
 		const movie = new Movie({
 			title: data.title,
 			numberInStock: data.numberInStock,
-			genres: data.genres
+			genre: data.genre
 		})
 
 		dbDebugger("movie: " , movie)
@@ -51,7 +53,7 @@ router.post("/" , async (req,res) => {
 })
 
 
-router.put("/" , async (req,res) => {
+router.put("/" , authorize, async (req,res) => {
 	const data = req.body;
 
 	try{
@@ -65,7 +67,7 @@ router.put("/" , async (req,res) => {
 })
 
 
-router.delete("/:id" , async (req,res)=> {
+router.delete("/:id" ,  authorize,async (req,res)=> {
 	try{
 		const id = req.params.id;
 		const result = await Movie.deleteOne({_id: id});

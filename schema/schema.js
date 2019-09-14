@@ -1,4 +1,6 @@
 const mongoose = require("mongoose")
+const jwt = require("jsonwebtoken");
+
 
 const genreSchema = new mongoose.Schema({
 	name: {
@@ -34,16 +36,16 @@ const Genre = mongoose.model("Genre" , genreSchema)
 const customerSchema = new mongoose.Schema({
 	displayName: {
 		type: String,
-		required: true,
 		minLength: 2,
 		maxLength: 100,
 	},
 	username: {
 		type: String,
-		required: true,
 		minLength: 2,
 		maxLength: 100,
-		match: /^(?![0-9])\w+$/
+		match: /^(?![0-9])\w+$/,
+		required: true,
+		unique: true
 	},
 	isGold: {
 		type: Boolean,
@@ -51,7 +53,6 @@ const customerSchema = new mongoose.Schema({
 	},
 	phone: {
 		type: String,
-		required: true,
 		match: /^[0-9+-]+$/,
 		minLength: 9,
 		maxLength: 20
@@ -60,25 +61,35 @@ const customerSchema = new mongoose.Schema({
 		type: String,
 		unique: true,
 		minLength: 7,
-		maxLength: 80
+		maxLength: 80,
+		required: true
+	},
+	password: {
+		type: String,
+		minLength: 6,
+		maxLength: 80,
+		required: true
 	}
 })
 
+customerSchema.methods.generateAuthToken = function(){
+	return jwt.sign({id: this._id , email: this.email} , process.env.JWT_SECRET);
+}
+
+
 const Customer = mongoose.model("Customer" , customerSchema);
-
-
 
 const movieSchema = new mongoose.Schema({
 	title: {
 		type: String,
 		required: true
 	},
-	genres: [	
+	genre: 
 		{
 			type:  mongoose.Schema.Types.ObjectId,
-			ref: "Genre"
+			ref: "Genre",
+			required: true
 		}
-	]
 	,
 	numberInStock: {
 		type: Number,
@@ -89,18 +100,34 @@ const movieSchema = new mongoose.Schema({
 const Movie = mongoose.model("Movie" , movieSchema);
 
 const rentalSchema = new mongoose.Schema({
-	movie:{		
+	// movie:{		
+	// 		type: mongoose.Schema.Types.ObjectId,
+	// 		ref: "Movie",
+	// 		required: true
+	// 	// 	validate: {
+	// 	// 		validator: function(movies){
+	// 	// 			const filtered = movies.filter(Boolean)
+	// 	// 			return filtered && filtered.length > 0
+	// 	// 		},
+	// 	// 		message: "A rental must have a movie"
+	// 	// }	
+	// },
+
+	movies: {
+		type: [{
 			type: mongoose.Schema.Types.ObjectId,
-			ref: "Movie",
-			required: true
-		// 	validate: {
-		// 		validator: function(movies){
-		// 			const filtered = movies.filter(Boolean)
-		// 			return filtered && filtered.length > 0
-		// 		},
-		// 		message: "A rental must have a movie"
-		// }	
+			ref: "Movie"
+		}],
+		required: true,
+		validate: {
+				validator: function(movies){
+					const filtered = movies.filter(Boolean)
+					return filtered && filtered.length > 0
+				},
+				message: "A rental must have atleast one movie"
+		}	
 	},
+
 	dateOut: {
 		type: Date,
 		default: Date.now()

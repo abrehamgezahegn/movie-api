@@ -3,6 +3,8 @@ const Fawn = require("fawn");
 const mongoose  = require("mongoose")
 const {Rental , Movie , Customer} = require("../schema/schema");
 const dbDebugger = require("debug")('app:db');
+const authorize = require("../middlewares/auth");
+
 
 const router = express.Router();
 
@@ -12,7 +14,7 @@ Fawn.init(mongoose);
 
 router.get("/" , async (req ,res) => {
 	try{
-		const rentals = await Rental.find().populate("movie")
+		const rentals = await Rental.find().populate("movies")
 		res.send(rentals)
 	}catch(err){
 		res.status(500).send(err);
@@ -20,7 +22,7 @@ router.get("/" , async (req ,res) => {
 })
 
 
-router.post("/" , async (req , res) => {
+router.post("/" , authorize, async (req , res) => {
 
 	try{
 		const data = req.body;
@@ -29,7 +31,7 @@ router.post("/" , async (req , res) => {
 
 		let movieItem = null;
 
-		data.movies.forEach(item => {
+		data.movies.forEach(async item => {
 			movieItem =  await Movie.findById(item);
 			if(!movieItem) return res.status(404).send(`movie by ${movieItem} not found`)
 			if(movieItem.numberInStock === 0) return res.status(400).send(`movie by ${movieItem} rented out`)
@@ -48,7 +50,7 @@ router.post("/" , async (req , res) => {
 		dbDebugger("rental: " , rental)
 		const result = await rental.save();
 
-		data.movies.forEach(item => {
+		data.movies.forEach(async item => {
 			movieItem =  await Movie.findById(item);		
 			movieItem.numberInStock--;
 			movieItem.save();
