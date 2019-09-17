@@ -3,6 +3,7 @@ const Joi = require("@hapi/joi");
 const {Genre} = require("../schema/schema")
 const dbDebugger  = require("debug")("app:db");
 const authorize = require("../middlewares/auth");
+const isAdmin = require("../middlewares/admin");
 
 
 const router = express.Router();
@@ -68,7 +69,7 @@ router.put("/" , authorize , async (req,res) =>{
 })
 
 
-router.delete("/:id" , authorize, async (req ,res) => {
+router.delete("/:id" , [authorize , isAdmin] , async (req ,res) => {
 	const id = req.params.id;
 	try{
 		const result = await Genre.deleteOne({_id: id});

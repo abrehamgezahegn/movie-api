@@ -19,14 +19,15 @@ router.post("/register" , async (req,res) => {
 		const user = await new Customer({
 			username: data.username,
 			email: data.email,
-			password: hash
+			password: hash,
+			role: data.role
 		})
 		
 		const result = await user.save();
 		const  response = {
 			username: data.username,
 			email: data.email,
-			password: user.password
+			role: data.role
 		}
 
 		const token = user.generateAuthToken();
@@ -66,7 +67,8 @@ const validateUser = (user) => {
 	const schema = Joi.object().keys({
 		email: Joi.string().min(5).max(80).required().email(),
 		password: Joi.string().min(6).max(80).required(),
-		username: Joi.string().min(1).max(40).optional()
+		username: Joi.string().min(1).max(40).optional(),
+		role: Joi.string()
 	})
 
 	return Joi.validate(user,schema);

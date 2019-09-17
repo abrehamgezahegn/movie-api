@@ -5,12 +5,21 @@ const authorize = (req,res,next) => {
 	if(!token) return res.status(401).send("Access denied.Token is required.")
 
 	try{
-		const decoded = jwt.verify(process.env.JWT_TOKEN);
-		console.log("decoded: " , decoded);
+		const decoded = jwt.verify(token , process.env.JWT_SECRET);
+		req.user = decoded
+		console.log(decoded)
 		next();
 	}catch(err){
 		res.status(401).send("Access denied.Token is tempered with.")
 	}
 }
 
-module.exports = authorize;
+
+const isAdmin = (req,res,next) => {
+	if(req.user.role !== "admin") return res.status(403).send("You are trying to access a classified info.")
+	next();
+}
+
+
+
+module.exports =  authorize

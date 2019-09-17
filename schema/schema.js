@@ -69,11 +69,12 @@ const customerSchema = new mongoose.Schema({
 		minLength: 6,
 		maxLength: 80,
 		required: true
-	}
+	},
+	role: String
 })
 
 customerSchema.methods.generateAuthToken = function(){
-	return jwt.sign({id: this._id , email: this.email} , process.env.JWT_SECRET);
+	return jwt.sign({id: this._id , email: this.email , role: this.role} , process.env.JWT_SECRET);
 }
 
 
