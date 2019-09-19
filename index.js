@@ -9,6 +9,8 @@ const mongoose = require("mongoose");
 const debugStartup = require("debug")("app:startup");
 const dbDebugger = require("debug")("app:db");
 
+//middlewares
+const handleError = require("./middlewares/error");
 
 // routers
 const genresRouter = require("./routers/genres");
@@ -19,6 +21,11 @@ const rentalRouter = require("./routers/rentals")
 const authRouter = require('./routers/auth');
 
 const app = express();
+
+
+process.on("uncaughtException" , (err) => {
+	debugStartup("node err: " , err)
+})
 
 // mongoose db connection
 mongoose
@@ -45,6 +52,7 @@ app.use("/api/rentals" , rentalRouter);
 app.use("/api/auth" , authRouter)
 app.use('/' , rootRouter)
 
+app.use(handleError)
 
 const port = process.env.PORT || 3000 ;
 

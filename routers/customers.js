@@ -10,38 +10,35 @@ const isAdmin = require("../middlewares/admin");
 const router = express.Router();
 
 
-router.get("/" , async (req,res)=> {
+router.get("/" , async (req,res,next)=> {
 	try{
 		const result = await Customer.find();
 		res.send(result);
 	}catch(err){
-		dbDebugger("server error: " , err)
-		res.status(500).send(err)
+		next(err)
 	}
 })
 
-router.get("/me"  , authorize , async (req , res) => {
+router.get("/me"  , authorize , async (req , res,next) => {
 	try{
 		const customer = await Customer.findById(req.user.id);
 		if(!customer) return res.status(404).send("No one found");
 		res.send(customer)
 	}catch(err){
-		dbDebugger("server error: " , err)
-		res.status(500).send(err)
+		next(err)
 	}
 
 })
 
-router.get("/:id" , async (req,res) => {
+router.get("/:id" , async (req,res,next) => {
 	const id = req.params.id;
 	try{
-		const result = await Customer.find({_id: id});
+		const result = await Customer.find({_id: pl.id});
 		if(!result) res.status(404).send("No one found");
 
 		res.send(result)
 	}catch(err){
-		dbDebugger("server error: " , err)
-		res.status(500).send(err)
+		next(err)
 	}
 })
 
