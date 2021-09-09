@@ -1,5 +1,5 @@
-require('dotenv').config()
-const express = require('express');
+require("dotenv").config();
+const express = require("express");
 const helmet = require("helmet");
 const morgan = require("morgan");
 
@@ -17,47 +17,50 @@ const genresRouter = require("./routers/genres");
 const rootRouter = require("./routers/root");
 const customersRouter = require("./routers/customers");
 const moviesRouter = require("./routers/movies");
-const rentalRouter = require("./routers/rentals")
-const authRouter = require('./routers/auth');
+const rentalRouter = require("./routers/rentals");
+const authRouter = require("./routers/auth");
 
 const app = express();
 
-
-process.on("uncaughtException" , (err) => {
-	debugStartup("node err: " , err)
-})
+process.on("uncaughtException", (err) => {
+  debugStartup("node err: ", err);
+});
 
 // mongoose db connection
 mongoose
-		.connect("mongodb://localhost/vidly" , { useNewUrlParser: true ,useCreateIndex: true  })
-		.then(() => {dbDebugger("connected to mongoose")})
-		.catch(err => {dbDebugger(err)})
-
+  .connect("mongodb://localhost/vidly", {
+    useNewUrlParser: true,
+    useCreateIndex: true,
+  })
+  .then(() => {
+    dbDebugger("connected to mongoose");
+  })
+  .catch((err) => {
+    dbDebugger(err);
+  });
 
 debugStartup("app startin up");
 
-
 app.use(helmet());
 app.use(express.json());
-app.use(morgan("tiny"))
+app.use(morgan("tiny"));
 
 // Auth middlewares
 
-
 // router middlewares
-app.use("/api/genres" , genresRouter);
-app.use("/api/customers" , customersRouter)
-app.use("/api/movies" , moviesRouter);
-app.use("/api/rentals" , rentalRouter);
-app.use("/api/auth" , authRouter)
-app.use('/' , rootRouter)
+app.use("/api/genres", genresRouter);
+app.use("/api/customers", customersRouter);
+app.use("/api/movies", moviesRouter);
+app.use("/api/rentals", rentalRouter);
+app.use("/api/auth", authRouter);
+app.use("/", rootRouter);
 
-app.use(handleError)
+app.use(handleError);
 
-const port = process.env.PORT || 3000 ;
+const port = process.env.PORT || 3000;
 
-console.log(process.env.NODE_ENV)
+console.log(process.env.NODE_ENV);
 
-app.listen(port , () =>{
-	console.log(`Vidly running on ${port}`)
-})
+app.listen(port, () => {
+  console.log(`Vidly running on ${port}`);
+});
